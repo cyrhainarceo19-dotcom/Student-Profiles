@@ -3,22 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Student Connect | Profile Network</title>
+  <title>Student Connect | Share Your Profile</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Google Fonts for modern typography -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
-    <!-- Header Section -->
+    <!-- Header -->
     <header class="header">
       <div class="container">
-        <h1>🎓 Student Connect</h1>
-        <p>Share your journey • Connect with peers</p>
+        <div class="header-content">
+          <div>
+            <h1>🎓 Student Connect</h1>
+            <p>Share your journey • Connect with peers</p>
+          </div>
+          <button id="adminPanelBtn" class="btn-admin">
+            <i class="fas fa-user-shield"></i> Admin Portal
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container">
       <!-- Student Submission Form -->
       <section class="form-section">
@@ -27,13 +33,24 @@
           <form id="studentForm">
             <div class="form-group">
               <label for="fullName">Full Name <span class="required">*</span></label>
-              <input type="text" id="fullName" name="fullName" placeholder="e.g., Maria Santos" required>
+              <input type="text" id="fullName" name="fullName" placeholder="First Name, MI, Last Name" required>
               <div class="error-msg" id="nameError"></div>
             </div>
 
             <div class="form-group">
               <label for="course">Course <span class="required">*</span></label>
-              <input type="text" id="course" name="course" placeholder="e.g., Computer Science" required>
+              <select id="course" name="course" required>
+                <option value="" disabled selected>– Select Course –</option>
+                <option value="Computer Science">💻 Computer Science</option>
+                <option value="Information Technology">🖥️ Information Technology</option>
+                <option value="Engineering">🔧 Engineering</option>
+                <option value="Business Administration">📊 Business Administration</option>
+                <option value="Psychology">🧠 Psychology</option>
+                <option value="Education">✈️ Tourism Management</option>
+                <option value="Nursing">🏥 Nursing</option>
+                <option value="Architecture">🏛️ Architecture</option>
+                <option value="Communications">📡 Communications</option>
+              </select>
               <div class="error-msg" id="courseError"></div>
             </div>
 
@@ -51,12 +68,12 @@
 
             <div class="form-group">
               <label for="bio">Short Bio <span class="optional">(optional)</span></label>
-              <textarea id="bio" name="bio" rows="3" placeholder="Tell something about yourself... interests, goals, or fun facts"></textarea>
+              <textarea id="bio" name="bio" rows="3" placeholder="Tell something about yourself..."></textarea>
             </div>
 
             <div class="form-group">
-              <label for="achievements">Your Achievements <span class="optional">(optional)</span></label>
-              <textarea id="achievements" name="achievements" rows="4" placeholder="Share your achievements... academic awards, leadership roles, projects, etc."></textarea>
+              <label for="achievements">Achievements <span class="optional">(optional)</span></label>
+              <textarea id="achievements" name="achievements" rows="3" placeholder="Share your achievements..."></textarea>
             </div>
 
             <button type="submit" id="submitBtn" class="btn btn-primary">✨ Submit Profile</button>
@@ -65,30 +82,41 @@
         </div>
       </section>
 
-      <!-- Profiles Display Section -->
+      <!-- Course Filter Section -->
+      <section class="filter-section">
+        <div class="filter-header">
+          <h2><i class="fas fa-filter"></i> Filter by Course</h2>
+          <p class="filter-description">Select a course to see only students from that program</p>
+        </div>
+        <div class="course-filters" id="courseFilters">
+          <button class="filter-btn active" data-course="all">📚 All Courses</button>
+        </div>
+      </section>
+
+      <!-- Student Community Display -->
       <section class="profiles-section">
         <div class="section-header">
-          <h2>👥 Student Community</h2>
-          <button id="refreshBtn" class="btn btn-secondary">⟳ Refresh</button>
+          <div>
+            <h2>👥 Student Community</h2>
+            <p id="filterResultText" class="filter-result">Loading students...</p>
+          </div>
+          <button id="refreshBtn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
 
-        <!-- Loading Indicator -->
         <div id="loadingIndicator" class="loading-indicator hidden">
           <div class="spinner"></div>
           <p>Loading profiles...</p>
         </div>
 
-        <!-- Profiles Grid Container -->
         <div id="profilesContainer" class="profiles-grid">
           <div class="empty-state">
-            <span>✨ No profiles yet</span>
-            <p>Be the first to share your student profile!</p>
+            <span>✨</span>
+            <p>No student profiles yet. Be the first to submit!</p>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
       <div class="container">
         <p>📊 Powered by Google Sheets • Student Connect Platform</p>
@@ -96,7 +124,7 @@
     </footer>
   </div>
 
-  <!-- Modal for Student Details -->
+  <!-- Student Details Modal -->
   <div id="studentModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">

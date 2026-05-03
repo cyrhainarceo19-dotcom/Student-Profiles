@@ -1,10 +1,13 @@
 // ============================================
-// STUDENT PROFILE SYSTEM - WITH MODAL DETAILS
-// Using Sheet.best - NO CORS ISSUES!
+// STUDENT VIEW - PUBLIC INTERFACE
 // ============================================
 
-// Sheet.best API URL (your working endpoint)
-const SHEETBEST_URL = 'https://api.sheetbest.com/sheets/090c207b-1ec1-4403-9ae5-5fbeff38e513';
+// 🔴 PALITAN ANG URL NA ITO - Gamitin ang iyong Sheet.best URL para sa StudentProfiles
+// Pumunta sa sheet.best, kopyahin ang API URL ng iyong StudentProfiles sheet
+const STUDENTS_API_URL = 'https://api.sheetbest.com/sheets/090c207b-1ec1-4403-9ae5-5fbeff38e513';
+
+// ⚠️ KUNG GAMIT MO AY IISANG SPREADSHEET NA MAY DIFFERENT TABS:
+// const STUDENTS_API_URL = 'https://api.sheetbest.com/sheets/YOUR_SHEET_ID/tabs/StudentProfiles';
 
 // DOM Elements
 const studentForm = document.getElementById('studentForm');
@@ -12,46 +15,50 @@ const submitBtn = document.getElementById('submitBtn');
 const profilesContainer = document.getElementById('profilesContainer');
 const loadingIndicator = document.getElementById('loadingIndicator');
 const refreshBtn = document.getElementById('refreshBtn');
+const adminPanelBtn = document.getElementById('adminPanelBtn');
 const formMessage = document.getElementById('formMessage');
+const filterResultText = document.getElementById('filterResultText');
+const courseFiltersDiv = document.getElementById('courseFilters');
 
 // Modal Elements
 const modal = document.getElementById('studentModal');
-const closeModal = document.querySelector('.close-modal');
+const closeModal = document.querySelectorAll('.close-modal');
 const modalName = document.getElementById('modalName');
 const modalCourse = document.getElementById('modalCourse');
 const modalYear = document.getElementById('modalYear');
 const modalBio = document.getElementById('modalBio');
 const modalAchievements = document.getElementById('modalAchievements');
 
+// Variables
+let allStudents = [];
+let currentFilter = 'all';
+
 // ============================================
-// FETCH ALL STUDENT PROFILES (GET Request)
+// FETCH ALL PROFILES
 // ============================================
 async function fetchAllProfiles() {
     showLoading(true);
     
     try {
-        const response = await fetch(SHEETBEST_URL);
+        const response = await fetch(STUDENTS_API_URL);
         
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}`);
         }
         
-        const students = await response.json();
-        console.log('Fetched students:', students);
+        allStudents = await response.json();
+        console.log('Fetched students:', allStudents.length);
         
-        if (students.length === 0) {
-            displayEmptyState();
-        } else {
-            displayProfiles(students);
-        }
+        updateCourseFilters();
+        applyFilter();
         
     } catch (error) {
-        console.error('Error fetching profiles:', error);
+        console.error('Error:', error);
         profilesContainer.innerHTML = `
             <div class="empty-state">
                 <span>⚠️</span>
                 <p>Error loading profiles: ${error.message}</p>
-                <p>Please check your internet connection and try again.</p>
+                <p>Please check your internet connection and refresh.</p>
             </div>
         `;
     } finally {
@@ -60,20 +67,59 @@ async function fetchAllProfiles() {
 }
 
 // ============================================
-// DISPLAY PROFILES AS CARDS
+// UPDATE COURSE FILTERS
 // ============================================
-function displayProfiles(students) {
-    if (!students || students.length === 0) {
-        displayEmptyState();
-        return;
+function updateCourseFilters() {
+    const courses = [...new Set(allStudents.map(s => s.Course).filter(c => c))];
+    
+    let filtersHTML = `<button class="filter-btn active" data-course="all">📚 All Courses</button>`;
+    
+    courses.forEach(course => {
+        filtersHTML += `<button class="filter-btn" data-course="${course}">${course}</button>`;
+    });
+    
+    courseFiltersDiv.innerHTML = filtersHTML;
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-course');
+            applyFilter();
+        });
+    });
+}
+
+// ============================================
+// APPLY FILTER
+// ============================================
+function applyFilter() {
+    let filteredStudents;
+    
+    if (currentFilter === 'all') {
+        filteredStudents = allStudents;
+        filterResultText.textContent = `Showing all ${filteredStudents.length} students`;
+    } else {
+        filteredStudents = allStudents.filter(student => student.Course === currentFilter);
+        filterResultText.textContent = `Showing ${filteredStudents.length} student(s) from ${currentFilter}`;
     }
     
+    if (filteredStudents.length === 0) {
+        displayEmptyState(currentFilter);
+    } else {
+        displayProfiles(filteredStudents);
+    }
+}
+
+// ============================================
+// DISPLAY PROFILES
+// ============================================
+function displayProfiles(students) {
     const profilesHTML = students.map((student, index) => {
-        const bioText = student.Bio && student.Bio.trim() !== '' ? student.Bio : '';
-        const achievementsText = student.Achievements && student.Achievements.trim() !== '' ? student.Achievements : '';
+        const bioText = student.Bio && student.Bio.trim() !== '' ? student.Bio.substring(0, 100) : '';
         
         return `
-            <div class="student-card" data-index="${index}" data-student='${JSON.stringify(student).replace(/'/g, "&#39;")}'>
+            <div class="student-card" data-index="${index}">
                 <div class="card-header">
                     <h3 class="card-name">${escapeHtml(student.Name)}</h3>
                 </div>
@@ -81,66 +127,73 @@ function displayProfiles(students) {
                     <span class="badge-course">📚 ${escapeHtml(student.Course)}</span>
                     <span class="badge-year">🎓 ${escapeHtml(student.Year)}</span>
                 </div>
-                ${bioText ? `
-                <div class="card-bio">
-                    <strong>📝 Bio:</strong>
-                    <p>${escapeHtml(bioText.substring(0, 100))}${bioText.length > 100 ? '...' : ''}</p>
-                </div>
-                ` : ''}
-                <div class="card-footer">
-                    <button class="view-details-btn" data-index="${index}">👁️ View Details</button>
-                </div>
+                ${bioText ? `<div class="card-bio"><p>${escapeHtml(bioText)}${student.Bio.length > 100 ? '...' : ''}</p></div>` : '<div class="card-bio"><em>No bio provided</em></div>'}
+                <button class="view-details-btn" data-index="${index}">👁️ View Full Details</button>
             </div>
         `;
     }).join('');
     
     profilesContainer.innerHTML = profilesHTML;
     
-    // Add click event listeners to all "View Details" buttons
     document.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const index = btn.getAttribute('data-index');
-            openModal(students[parseInt(index)]);
+            const index = parseInt(btn.getAttribute('data-index'));
+            let student;
+            
+            if (currentFilter === 'all') {
+                student = allStudents[index];
+            } else {
+                const filtered = allStudents.filter(s => s.Course === currentFilter);
+                student = filtered[index];
+            }
+            
+            if (student) openModal(student);
         });
     });
 }
 
 // ============================================
-// OPEN MODAL WITH STUDENT DETAILS
+// DISPLAY EMPTY STATE
+// ============================================
+function displayEmptyState(courseFilter) {
+    if (courseFilter === 'all') {
+        profilesContainer.innerHTML = `<div class="empty-state"><span>✨</span><p>No student profiles yet. Be the first to submit!</p></div>`;
+    } else {
+        profilesContainer.innerHTML = `<div class="empty-state"><span>🔍</span><p>No students found in ${escapeHtml(courseFilter)}</p><p>Try selecting a different course!</p></div>`;
+    }
+}
+
+// ============================================
+// OPEN MODAL
 // ============================================
 function openModal(student) {
     modalName.textContent = student.Name || 'No Name';
     modalCourse.textContent = `📚 ${student.Course || 'No Course'}`;
     modalYear.textContent = `🎓 ${student.Year || 'No Year'}`;
-    modalBio.textContent = student.Bio && student.Bio.trim() !== '' ? student.Bio : 'No bio provided';
-    modalAchievements.textContent = student.Achievements && student.Achievements.trim() !== '' ? student.Achievements : 'No achievements listed';
+    modalBio.textContent = student.Bio?.trim() || 'No bio provided';
+    modalAchievements.textContent = student.Achievements?.trim() || 'No achievements listed';
     
     modal.classList.add('show');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    document.body.style.overflow = 'hidden';
 }
 
-// ============================================
-// CLOSE MODAL
-// ============================================
 function closeModalFunction() {
     modal.classList.remove('show');
-    document.body.style.overflow = 'auto'; // Restore scrolling
+    document.body.style.overflow = 'auto';
 }
 
 // ============================================
-// SUBMIT STUDENT DATA (POST Request)
+// SUBMIT STUDENT DATA
 // ============================================
 async function submitStudentData(formData) {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
     
     try {
-        const response = await fetch(SHEETBEST_URL, {
+        const response = await fetch(STUDENTS_API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Name: formData.name,
                 Course: formData.course,
@@ -150,25 +203,13 @@ async function submitStudentData(formData) {
             })
         });
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Submit result:', result);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         showSuccessMessage('✅ Profile submitted successfully!');
-        
-        // Clear form
         studentForm.reset();
-        
-        // Refresh profiles to show the new student
-        setTimeout(() => {
-            fetchAllProfiles();
-        }, 1000);
+        setTimeout(() => fetchAllProfiles(), 1000);
         
     } catch (error) {
-        console.error('Error submitting:', error);
         showErrorMessage('❌ Failed to submit. Please try again.');
     } finally {
         submitBtn.disabled = false;
@@ -177,21 +218,46 @@ async function submitStudentData(formData) {
 }
 
 // ============================================
-// DISPLAY EMPTY STATE
+// VALIDATE FORM
 // ============================================
-function displayEmptyState() {
-    profilesContainer.innerHTML = `
-        <div class="empty-state">
-            <span>✨</span>
-            <p>No student profiles yet. Be the first to submit!</p>
-            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Fill out the form above to get started.</p>
-        </div>
-    `;
+function validateForm(name, course, year) {
+    let isValid = true;
+    
+    document.getElementById('nameError').textContent = '';
+    document.getElementById('courseError').textContent = '';
+    document.getElementById('yearError').textContent = '';
+    
+    if (!name?.trim()) {
+        document.getElementById('nameError').textContent = 'Full name is required';
+        isValid = false;
+    }
+    if (!course) {
+        document.getElementById('courseError').textContent = 'Please select a course';
+        isValid = false;
+    }
+    if (!year) {
+        document.getElementById('yearError').textContent = 'Please select a year level';
+        isValid = false;
+    }
+    
+    return isValid;
 }
 
 // ============================================
-// SHOW/HIDE LOADING INDICATOR
+// MESSAGES & UTILITIES
 // ============================================
+function showSuccessMessage(msg) {
+    formMessage.textContent = msg;
+    formMessage.className = 'form-message success';
+    setTimeout(() => { formMessage.textContent = ''; formMessage.className = 'form-message'; }, 4000);
+}
+
+function showErrorMessage(msg) {
+    formMessage.textContent = msg;
+    formMessage.className = 'form-message error';
+    setTimeout(() => { formMessage.textContent = ''; formMessage.className = 'form-message'; }, 4000);
+}
+
 function showLoading(show) {
     if (show) {
         loadingIndicator.classList.remove('hidden');
@@ -202,76 +268,9 @@ function showLoading(show) {
     }
 }
 
-// ============================================
-// VALIDATE FORM INPUTS
-// ============================================
-function validateForm(name, course, year) {
-    let isValid = true;
-    
-    // Clear previous errors
-    document.getElementById('nameError').textContent = '';
-    document.getElementById('courseError').textContent = '';
-    document.getElementById('yearError').textContent = '';
-    
-    // Validate Full Name
-    if (!name || name.trim() === '') {
-        document.getElementById('nameError').textContent = 'Full name is required';
-        isValid = false;
-    } else if (name.trim().length < 2) {
-        document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
-        isValid = false;
-    }
-    
-    // Validate Course
-    if (!course || course.trim() === '') {
-        document.getElementById('courseError').textContent = 'Course is required';
-        isValid = false;
-    } else if (course.trim().length < 2) {
-        document.getElementById('courseError').textContent = 'Course must be at least 2 characters';
-        isValid = false;
-    }
-    
-    // Validate Year Level
-    if (!year || year === '') {
-        document.getElementById('yearError').textContent = 'Please select a year level';
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-// ============================================
-// SHOW MESSAGES
-// ============================================
-function showSuccessMessage(message) {
-    formMessage.textContent = message;
-    formMessage.className = 'form-message success';
-    setTimeout(() => {
-        formMessage.textContent = '';
-        formMessage.className = 'form-message';
-    }, 4000);
-}
-
-function showErrorMessage(message) {
-    formMessage.textContent = message;
-    formMessage.className = 'form-message error';
-    setTimeout(() => {
-        formMessage.textContent = '';
-        formMessage.className = 'form-message';
-    }, 4000);
-}
-
-// ============================================
-// HELPER: Escape HTML to prevent XSS
-// ============================================
 function escapeHtml(str) {
     if (!str) return '';
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 // ============================================
@@ -279,7 +278,6 @@ function escapeHtml(str) {
 // ============================================
 studentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const name = document.getElementById('fullName').value;
     const course = document.getElementById('course').value;
     const year = document.getElementById('yearLevel').value;
@@ -290,32 +288,15 @@ studentForm.addEventListener('submit', async (e) => {
         showErrorMessage('Please fill in all required fields!');
         return;
     }
-    
     await submitStudentData({ name, course, year, bio, achievements });
 });
 
-refreshBtn.addEventListener('click', () => {
-    fetchAllProfiles();
-    showSuccessMessage('Refreshing profiles...');
-});
+refreshBtn.addEventListener('click', () => { fetchAllProfiles(); showSuccessMessage('Refreshing profiles...'); });
+adminPanelBtn.addEventListener('click', () => { window.location.href = 'admin.html'; });
 
-// Modal event listeners
-closeModal.addEventListener('click', closeModalFunction);
-window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModalFunction();
-    }
-});
-// Close modal with Escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('show')) {
-        closeModalFunction();
-    }
-});
+closeModal.forEach(btn => btn.addEventListener('click', closeModalFunction));
+window.addEventListener('click', (e) => { if (e.target === modal) closeModalFunction(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('show')) closeModalFunction(); });
 
-// ============================================
-// INITIALIZE - Load profiles on page load
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    fetchAllProfiles();
-});
+// Initialize
+document.addEventListener('DOMContentLoaded', () => { fetchAllProfiles(); });
