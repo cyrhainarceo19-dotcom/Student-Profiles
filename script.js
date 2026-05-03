@@ -1,13 +1,9 @@
 // ============================================
-// STUDENT VIEW - PUBLIC INTERFACE
+// STUDENT VIEW - WITH SOCIAL MEDIA LINKS
 // ============================================
 
 // 🔴 PALITAN ANG URL NA ITO - Gamitin ang iyong Sheet.best URL para sa StudentProfiles
-// Pumunta sa sheet.best, kopyahin ang API URL ng iyong StudentProfiles sheet
 const STUDENTS_API_URL = 'https://api.sheetbest.com/sheets/090c207b-1ec1-4403-9ae5-5fbeff38e513';
-
-// ⚠️ KUNG GAMIT MO AY IISANG SPREADSHEET NA MAY DIFFERENT TABS:
-// const STUDENTS_API_URL = 'https://api.sheetbest.com/sheets/YOUR_SHEET_ID/tabs/StudentProfiles';
 
 // DOM Elements
 const studentForm = document.getElementById('studentForm');
@@ -28,6 +24,8 @@ const modalCourse = document.getElementById('modalCourse');
 const modalYear = document.getElementById('modalYear');
 const modalBio = document.getElementById('modalBio');
 const modalAchievements = document.getElementById('modalAchievements');
+const modalSocialSection = document.getElementById('modalSocialSection');
+const modalSocialLinks = document.getElementById('modalSocialLinks');
 
 // Variables
 let allStudents = [];
@@ -112,11 +110,20 @@ function applyFilter() {
 }
 
 // ============================================
-// DISPLAY PROFILES
+// DISPLAY PROFILES WITH SOCIAL ICONS
 // ============================================
 function displayProfiles(students) {
     const profilesHTML = students.map((student, index) => {
         const bioText = student.Bio && student.Bio.trim() !== '' ? student.Bio.substring(0, 100) : '';
+        
+        // Build social icons HTML
+        let socialIconsHTML = '';
+        if (student.Facebook) {
+            socialIconsHTML += `<a href="${escapeHtml(student.Facebook)}" target="_blank" class="social-icon" title="Facebook"><i class="fab fa-facebook"></i></a>`;
+        }
+        if (student.Instagram) {
+            socialIconsHTML += `<a href="${escapeHtml(student.Instagram)}" target="_blank" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>`;
+        }
         
         return `
             <div class="student-card" data-index="${index}">
@@ -128,6 +135,7 @@ function displayProfiles(students) {
                     <span class="badge-year">🎓 ${escapeHtml(student.Year)}</span>
                 </div>
                 ${bioText ? `<div class="card-bio"><p>${escapeHtml(bioText)}${student.Bio.length > 100 ? '...' : ''}</p></div>` : '<div class="card-bio"><em>No bio provided</em></div>'}
+                ${socialIconsHTML ? `<div class="card-social">${socialIconsHTML}</div>` : ''}
                 <button class="view-details-btn" data-index="${index}">👁️ View Full Details</button>
             </div>
         `;
@@ -154,6 +162,49 @@ function displayProfiles(students) {
 }
 
 // ============================================
+// OPEN MODAL WITH SOCIAL MEDIA
+// ============================================
+function openModal(student) {
+    modalName.textContent = student.Name || 'No Name';
+    modalCourse.textContent = `📚 ${student.Course || 'No Course'}`;
+    modalYear.textContent = `🎓 ${student.Year || 'No Year'}`;
+    modalBio.textContent = student.Bio?.trim() || 'No bio provided';
+    modalAchievements.textContent = student.Achievements?.trim() || 'No achievements listed';
+    
+    // Handle social media links
+    let hasSocial = false;
+    let socialHTML = '';
+    
+    if (student.Facebook && student.Facebook.trim() !== '') {
+        socialHTML += `
+            <a href="${escapeHtml(student.Facebook)}" target="_blank" class="social-link">
+                <i class="fab fa-facebook"></i> Facebook
+            </a>
+        `;
+        hasSocial = true;
+    }
+    
+    if (student.Instagram && student.Instagram.trim() !== '') {
+        socialHTML += `
+            <a href="${escapeHtml(student.Instagram)}" target="_blank" class="social-link">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+        `;
+        hasSocial = true;
+    }
+    
+    if (hasSocial) {
+        modalSocialLinks.innerHTML = socialHTML;
+        modalSocialSection.style.display = 'block';
+    } else {
+        modalSocialSection.style.display = 'none';
+    }
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// ============================================
 // DISPLAY EMPTY STATE
 // ============================================
 function displayEmptyState(courseFilter) {
@@ -164,27 +215,13 @@ function displayEmptyState(courseFilter) {
     }
 }
 
-// ============================================
-// OPEN MODAL
-// ============================================
-function openModal(student) {
-    modalName.textContent = student.Name || 'No Name';
-    modalCourse.textContent = `📚 ${student.Course || 'No Course'}`;
-    modalYear.textContent = `🎓 ${student.Year || 'No Year'}`;
-    modalBio.textContent = student.Bio?.trim() || 'No bio provided';
-    modalAchievements.textContent = student.Achievements?.trim() || 'No achievements listed';
-    
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
 function closeModalFunction() {
     modal.classList.remove('show');
     document.body.style.overflow = 'auto';
 }
 
 // ============================================
-// SUBMIT STUDENT DATA
+// SUBMIT STUDENT DATA (WITH SOCIAL MEDIA)
 // ============================================
 async function submitStudentData(formData) {
     submitBtn.disabled = true;
@@ -199,7 +236,9 @@ async function submitStudentData(formData) {
                 Course: formData.course,
                 Year: formData.year,
                 Bio: formData.bio || '',
-                Achievements: formData.achievements || ''
+                Achievements: formData.achievements || '',
+                Facebook: formData.facebook || '',
+                Instagram: formData.instagram || ''
             })
         });
         
@@ -283,12 +322,14 @@ studentForm.addEventListener('submit', async (e) => {
     const year = document.getElementById('yearLevel').value;
     const bio = document.getElementById('bio').value;
     const achievements = document.getElementById('achievements').value;
+    const facebook = document.getElementById('facebook').value;
+    const instagram = document.getElementById('instagram').value;
     
     if (!validateForm(name, course, year)) {
         showErrorMessage('Please fill in all required fields!');
         return;
     }
-    await submitStudentData({ name, course, year, bio, achievements });
+    await submitStudentData({ name, course, year, bio, achievements, facebook, instagram });
 });
 
 refreshBtn.addEventListener('click', () => { fetchAllProfiles(); showSuccessMessage('Refreshing profiles...'); });

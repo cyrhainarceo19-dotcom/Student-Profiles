@@ -825,4 +825,96 @@ body {
   .modal-body {
     padding: 1.2rem;
   }
+
+  /* ============================================
+   SOCIAL MEDIA STYLES
+   ============================================ */
+
+/* Social icons on card */
+.card-social {
+    display: flex;
+    gap: 0.8rem;
+    margin: 0.8rem 0 0.5rem;
+    justify-content: center;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f2f5;
+    color: #4a6fa5;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.social-icon:hover {
+    transform: translateY(-2px);
+}
+
+.social-icon .fa-facebook:hover {
+    color: #1877f2;
+}
+
+.social-icon .fa-instagram:hover {
+    color: #e4405f;
+}
+
+/* Social links in modal */
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f0f2f5;
+    border-radius: 30px;
+    text-decoration: none;
+    color: #1e3c72;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+}
+
+.social-link .fa-facebook {
+    color: #1877f2;
+    font-size: 1.1rem;
+}
+
+.social-link .fa-instagram {
+    color: #e4405f;
+    font-size: 1.1rem;
+}
+
+/* Field hint text */
+.field-hint {
+    font-size: 0.7rem;
+    color: #7f8c8d;
+    margin-top: 0.25rem;
+}
+
+/* Facebook and Instagram input icons */
+.form-group label .fa-facebook {
+    color: #1877f2;
+    margin-right: 0.25rem;
+}
+
+.form-group label .fa-instagram {
+    color: #e4405f;
+    margin-right: 0.25rem;
+}
+
 }

@@ -46,7 +46,7 @@
                 <option value="Engineering">🔧 Engineering</option>
                 <option value="Business Administration">📊 Business Administration</option>
                 <option value="Psychology">🧠 Psychology</option>
-                <option value="Education">✈️ Tourism Management</option>
+                <option value="Tourism Management">✈️ Tourism Management</option>
                 <option value="Nursing">🏥 Nursing</option>
                 <option value="Architecture">🏛️ Architecture</option>
                 <option value="Communications">📡 Communications</option>
@@ -74,6 +74,19 @@
             <div class="form-group">
               <label for="achievements">Achievements <span class="optional">(optional)</span></label>
               <textarea id="achievements" name="achievements" rows="3" placeholder="Share your achievements..."></textarea>
+            </div>
+
+            <!-- NEW: Social Media Links -->
+            <div class="form-group">
+              <label for="facebook"><i class="fab fa-facebook"></i> Facebook Profile Link <span class="optional">(optional)</span></label>
+              <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/yourusername">
+              <div class="field-hint">Enter your full Facebook profile URL</div>
+            </div>
+
+            <div class="form-group">
+              <label for="instagram"><i class="fab fa-instagram"></i> Instagram Profile Link <span class="optional">(optional)</span></label>
+              <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/yourusername">
+              <div class="field-hint">Enter your full Instagram profile URL</div>
             </div>
 
             <button type="submit" id="submitBtn" class="btn btn-primary">✨ Submit Profile</button>
@@ -119,7 +132,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p>📊 Powered by FWP GROUP 7 • Student Connect Platform</p>
+        <p>📊 Made Group 7 FWP • Student Connect Platform</p>
       </div>
     </footer>
   </div>
@@ -143,6 +156,11 @@
         <div class="modal-section">
           <h3>🏆 Achievements</h3>
           <p id="modalAchievements">No achievements listed</p>
+        </div>
+        <!-- Social Media Section -->
+        <div class="modal-section" id="modalSocialSection" style="display: none;">
+          <h3><i class="fas fa-share-alt"></i> Connect with Me</h3>
+          <div class="social-links" id="modalSocialLinks"></div>
         </div>
       </div>
     </div>
