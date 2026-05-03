@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Student Connect | Profile Network</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts for modern typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="container">
+        <h1>🎓 Student Connect</h1>
+        <p>Share your journey • Connect with peers</p>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Student Submission Form -->
+      <section class="form-section">
+        <div class="card form-card">
+          <h2>📝 Create Your Profile</h2>
+          <form id="studentForm">
+            <div class="form-group">
+              <label for="fullName">Full Name <span class="required">*</span></label>
+              <input type="text" id="fullName" name="fullName" placeholder="e.g., Maria Santos" required>
+              <div class="error-msg" id="nameError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="course">Course <span class="required">*</span></label>
+              <input type="text" id="course" name="course" placeholder="e.g., Computer Science" required>
+              <div class="error-msg" id="courseError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="yearLevel">Year Level <span class="required">*</span></label>
+              <select id="yearLevel" name="yearLevel" required>
+                <option value="" disabled selected>– Select Year –</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+              <div class="error-msg" id="yearError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Short Bio <span class="optional">(optional)</span></label>
+              <textarea id="bio" name="bio" rows="3" placeholder="Tell something about yourself... interests, goals, or fun facts"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="achievements">Your Achievements <span class="optional">(optional)</span></label>
+              <textarea id="achievements" name="achievements" rows="4" placeholder="Share your achievements... academic awards, leadership roles, projects, etc."></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary">✨ Submit Profile</button>
+            <div id="formMessage" class="form-message"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Profiles Display Section -->
+      <section class="profiles-section">
+        <div class="section-header">
+          <h2>👥 Student Community</h2>
+          <button id="refreshBtn" class="btn btn-secondary">⟳ Refresh</button>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator hidden">
+          <div class="spinner"></div>
+          <p>Loading profiles...</p>
+        </div>
+
+        <!-- Profiles Grid Container -->
+        <div id="profilesContainer" class="profiles-grid">
+          <div class="empty-state">
+            <span>✨ No profiles yet</span>
+            <p>Be the first to share your student profile!</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>📊 Powered by Google Sheets • Student Connect Platform</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal for Student Details -->
+  <div id="studentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalName">Student Name</h2>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-badges">
+          <span class="modal-badge-course" id="modalCourse">📚 Course</span>
+          <span class="modal-badge-year" id="modalYear">🎓 Year</span>
+        </div>
+        <div class="modal-section">
+          <h3>📝 Bio</h3>
+          <p id="modalBio">No bio provided</p>
+        </div>
+        <div class="modal-section">
+          <h3>🏆 Achievements</h3>
+          <p id="modalAchievements">No achievements listed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
