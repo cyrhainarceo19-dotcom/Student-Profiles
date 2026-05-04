@@ -171,6 +171,40 @@ body {
 }
 
 /* ============================================
+   FORM ROW LAYOUT
+   ============================================ */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row .form-group:last-child:only-child {
+  grid-column: span 2;
+}
+
+.submit-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.submit-container .btn-primary {
+  flex: 1;
+  margin: 0;
+}
+
+.terms-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ============================================
    FORM STYLES
    ============================================ */
 .form-section {
@@ -449,6 +483,226 @@ body {
 }
 
 /* ============================================
+   SOCIAL MEDIA STYLES
+   ============================================ */
+.card-social {
+  display: flex;
+  gap: 0.8rem;
+  margin: 0.8rem 0 0.5rem;
+  justify-content: center;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #4a6fa5;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px);
+}
+
+.social-icon .fa-facebook:hover {
+  color: #1877f2;
+}
+
+.social-icon .fa-instagram:hover {
+  color: #e4405f;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f0f2f5;
+  border-radius: 30px;
+  text-decoration: none;
+  color: #1e3c72;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+}
+
+.social-link .fa-facebook {
+  color: #1877f2;
+  font-size: 1.1rem;
+}
+
+.social-link .fa-instagram {
+  color: #e4405f;
+  font-size: 1.1rem;
+}
+
+/* Field hint and preview */
+.field-hint {
+  font-size: 0.7rem;
+  color: #7f8c8d;
+  margin-top: 0.25rem;
+}
+
+.url-preview {
+  font-size: 0.7rem;
+  color: #2a9d8f;
+  margin-top: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: #e8f5e9;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ============================================
+   TERMS AND CONDITIONS STYLES
+   ============================================ */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: #fff;
+  border: 2px solid #2a9d8f;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkbox-label:hover input ~ .checkmark {
+  background-color: #e8f5e9;
+}
+
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #2a9d8f;
+  border-color: #2a9d8f;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-label .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.terms-text {
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.terms-link {
+  color: #2a9d8f;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.terms-link:hover {
+  color: #238b7e;
+}
+
+#termsError {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+}
+
+/* Terms Modal */
+#termsModal .modal-content {
+  max-width: 650px;
+}
+
+.terms-body {
+  padding: 1.5rem;
+}
+
+.terms-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.terms-scroll p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.terms-scroll strong {
+  color: #1e3c72;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+.modal-footer .btn-primary {
+  width: auto;
+  min-width: 250px;
+}
+
+.terms-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terms-scroll::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.terms-scroll::-webkit-scrollbar-thumb {
+  background: #2a9d8f;
+  border-radius: 10px;
+}
+
+/* ============================================
    ADMIN TABLE STYLES
    ============================================ */
 .admin-stats {
@@ -520,6 +774,7 @@ body {
 .filter-group {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .filter-group select {
@@ -528,6 +783,7 @@ body {
   border-radius: 40px;
   font-size: 0.9rem;
   background: white;
+  cursor: pointer;
 }
 
 .admin-table-container {
@@ -557,7 +813,7 @@ body {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  min-width: 700px;
 }
 
 .admin-table th {
@@ -593,6 +849,19 @@ body {
 .delete-btn:hover {
   background: #e25822;
   transform: scale(1.05);
+}
+
+.terms-status {
+  font-weight: 600;
+  text-align: center;
+}
+
+.terms-status.accepted {
+  color: #2a9d8f;
+}
+
+.terms-status.not-accepted {
+  color: #e76f51;
 }
 
 .empty-table {
@@ -663,8 +932,9 @@ body {
   border-radius: 32px 32px 0 0;
 }
 
-.modal-header h2 {
+.modal-header h2, .modal-header h3 {
   font-size: 1.5rem;
+  margin: 0;
 }
 
 .close-modal {
@@ -818,7 +1088,7 @@ body {
     flex-direction: column;
   }
   
-  .modal-header h2 {
+  .modal-header h2, .modal-header h3 {
     font-size: 1.2rem;
   }
   
@@ -826,95 +1096,50 @@ body {
     padding: 1.2rem;
   }
 
-  /* ============================================
-   SOCIAL MEDIA STYLES
-   ============================================ */
-
-/* Social icons on card */
-.card-social {
-    display: flex;
-    gap: 0.8rem;
-    margin: 0.8rem 0 0.5rem;
-    justify-content: center;
-}
-
-.social-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #f0f2f5;
-    color: #4a6fa5;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    font-size: 1.1rem;
-}
-
-.social-icon:hover {
-    transform: translateY(-2px);
-}
-
-.social-icon .fa-facebook:hover {
-    color: #1877f2;
-}
-
-.social-icon .fa-instagram:hover {
-    color: #e4405f;
-}
-
-/* Social links in modal */
-.social-links {
-    display: flex;
-    flex-wrap: wrap;
+  .form-row {
+    grid-template-columns: 1fr;
     gap: 1rem;
-    margin-top: 0.5rem;
-}
-
-.social-link {
-    display: inline-flex;
+  }
+  
+  .form-row .form-group:last-child:only-child {
+    grid-column: span 1;
+  }
+  
+  .submit-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .terms-wrapper {
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: #f0f2f5;
-    border-radius: 30px;
-    text-decoration: none;
-    color: #1e3c72;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+  }
+  
+  .checkbox-label {
+    white-space: normal;
+    justify-content: center;
+  }
+  
+  .terms-text {
+    white-space: normal;
+  }
+
+  .terms-scroll {
+    max-height: 400px;
+  }
+  
+  .modal-footer .btn-primary {
+    min-width: 200px;
+    font-size: 0.85rem;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+  }
 }
 
-.social-link:hover {
-    transform: translateY(-2px);
-}
-
-.social-link .fa-facebook {
-    color: #1877f2;
-    font-size: 1.1rem;
-}
-
-.social-link .fa-instagram {
-    color: #e4405f;
-    font-size: 1.1rem;
-}
-
-/* Field hint text */
-.field-hint {
-    font-size: 0.7rem;
-    color: #7f8c8d;
-    margin-top: 0.25rem;
-}
-
-/* Facebook and Instagram input icons */
-.form-group label .fa-facebook {
-    color: #1877f2;
-    margin-right: 0.25rem;
-}
-
-.form-group label .fa-instagram {
-    color: #e4405f;
-    margin-right: 0.25rem;
-}
-
+@media (max-width: 480px) {
+  .terms-text {
+    font-size: 0.75rem;
+  }
 }

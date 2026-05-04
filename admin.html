@@ -44,10 +44,10 @@
           </div>
         </div>
         <div class="stat-card">
-          <i class="fas fa-clock"></i>
+          <i class="fas fa-check-circle"></i>
           <div>
-            <h3 id="lastUpdated">-</h3>
-            <p>Last Updated</p>
+            <h3 id="termsAcceptedCount">0</h3>
+            <p>Accepted Terms</p>
           </div>
         </div>
       </div>
@@ -61,6 +61,11 @@
         <div class="filter-group">
           <select id="courseFilter">
             <option value="all">All Courses</option>
+          </select>
+          <select id="termsFilter">
+            <option value="all">All Students</option>
+            <option value="accepted">Accepted Terms</option>
+            <option value="not_accepted">Not Accepted Terms</option>
           </select>
           <button id="refreshAdminBtn" class="btn-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
@@ -87,12 +92,14 @@
                 <th>Course</th>
                 <th>Year</th>
                 <th>Bio Preview</th>
+                <th>Terms Accepted</th>
+                <th>Date Accepted</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="studentsTableBody">
               <tr>
-                <td colspan="6" class="empty-table">No students found</td>
+                <td colspan="8" class="empty-table">No students found</td>
               </tr>
             </tbody>
           </table>
@@ -189,6 +196,10 @@
         <div class="modal-section">
           <h3>🏆 Achievements</h3>
           <p id="adminModalAchievements">No achievements listed</p>
+        </div>
+        <div class="modal-section">
+          <h3>📋 Terms & Conditions</h3>
+          <p id="adminModalTerms">Status: Not Accepted</p>
         </div>
         <div class="modal-actions">
           <button id="modalDeleteBtn" class="btn-danger"><i class="fas fa-trash"></i> Delete Profile</button>

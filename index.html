@@ -31,65 +31,88 @@
         <div class="card form-card">
           <h2>📝 Create Your Profile</h2>
           <form id="studentForm">
-            <div class="form-group">
-              <label for="fullName">Full Name <span class="required">*</span></label>
-              <input type="text" id="fullName" name="fullName" placeholder="First Name, MI, Last Name" required>
-              <div class="error-msg" id="nameError"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fullName">Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" name="fullName" placeholder="e.g., Juan Dela Cruz" required>
+                <div class="error-msg" id="nameError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="course">Course <span class="required">*</span></label>
+                <select id="course" name="course" required>
+                  <option value="" disabled selected>– Select Course –</option>
+                  <option value="Computer Science">💻 Computer Science</option>
+                  <option value="Information Technology">🖥️ Information Technology</option>
+                  <option value="Engineering">🔧 Engineering</option>
+                  <option value="Business Administration">📊 Business Administration</option>
+                  <option value="Psychology">🧠 Psychology</option>
+                  <option value="Tourism Management">✈️ Tourism Management</option>
+                  <option value="Nursing">🏥 Nursing</option>
+                  <option value="Architecture">🏛️ Architecture</option>
+                  <option value="Communications">📡 Communications</option>
+                </select>
+                <div class="error-msg" id="courseError"></div>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="course">Course <span class="required">*</span></label>
-              <select id="course" name="course" required>
-                <option value="" disabled selected>– Select Course –</option>
-                <option value="Computer Science">💻 Computer Science</option>
-                <option value="Information Technology">🖥️ Information Technology</option>
-                <option value="Engineering">🔧 Engineering</option>
-                <option value="Business Administration">📊 Business Administration</option>
-                <option value="Psychology">🧠 Psychology</option>
-                <option value="Tourism Management">✈️ Tourism Management</option>
-                <option value="Nursing">🏥 Nursing</option>
-                <option value="Architecture">🏛️ Architecture</option>
-                <option value="Communications">📡 Communications</option>
-              </select>
-              <div class="error-msg" id="courseError"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="yearLevel">Year Level <span class="required">*</span></label>
+                <select id="yearLevel" name="yearLevel" required>
+                  <option value="" disabled selected>– Select Year –</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+                <div class="error-msg" id="yearError"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="bio">Short Bio <span class="optional">(optional)</span></label>
+                <textarea id="bio" name="bio" rows="3" placeholder="Tell something about yourself..."></textarea>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="yearLevel">Year Level <span class="required">*</span></label>
-              <select id="yearLevel" name="yearLevel" required>
-                <option value="" disabled selected>– Select Year –</option>
-                <option value="1st Year">1st Year</option>
-                <option value="2nd Year">2nd Year</option>
-                <option value="3rd Year">3rd Year</option>
-                <option value="4th Year">4th Year</option>
-              </select>
-              <div class="error-msg" id="yearError"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="achievements">Achievements <span class="optional">(optional)</span></label>
+                <textarea id="achievements" name="achievements" rows="3" placeholder="Share your achievements..."></textarea>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="bio">Short Bio <span class="optional">(optional)</span></label>
-              <textarea id="bio" name="bio" rows="3" placeholder="Tell something about yourself..."></textarea>
+            <!-- Social Media Links -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="facebook"><i class="fab fa-facebook"></i> Facebook Profile Link <span class="optional">(optional)</span></label>
+                <input type="text" id="facebook" name="facebook" placeholder="@username or https://facebook.com/username">
+                <div class="field-hint">Pwedeng maglagay ng: username, @username, o buong URL</div>
+                <div id="facebookPreview" class="url-preview" style="display: none;"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="instagram"><i class="fab fa-instagram"></i> Instagram Profile Link <span class="optional">(optional)</span></label>
+                <input type="text" id="instagram" name="instagram" placeholder="@username or https://instagram.com/username">
+                <div class="field-hint">Pwedeng maglagay ng: username, @username, o buong URL</div>
+                <div id="instagramPreview" class="url-preview" style="display: none;"></div>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="achievements">Achievements <span class="optional">(optional)</span></label>
-              <textarea id="achievements" name="achievements" rows="3" placeholder="Share your achievements..."></textarea>
+            <!-- Submit Button with Terms Checkbox -->
+            <div class="submit-container">
+              <button type="submit" id="submitBtn" class="btn btn-primary">✨ Submit Profile</button>
+              
+              <div class="terms-wrapper">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="acceptTermsCheckbox" required>
+                  <span class="checkmark"></span>
+                  <span class="terms-text">I agree to the <a href="#" id="showTermsLink" class="terms-link">Terms & Conditions</a></span>
+                </label>
+                <div class="error-msg" id="termsError"></div>
+              </div>
             </div>
 
-            <!-- NEW: Social Media Links -->
-            <div class="form-group">
-              <label for="facebook"><i class="fab fa-facebook"></i> Facebook Profile Link <span class="optional">(optional)</span></label>
-              <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/yourusername">
-              <div class="field-hint">Enter your full Facebook profile URL</div>
-            </div>
-
-            <div class="form-group">
-              <label for="instagram"><i class="fab fa-instagram"></i> Instagram Profile Link <span class="optional">(optional)</span></label>
-              <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/yourusername">
-              <div class="field-hint">Enter your full Instagram profile URL</div>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn btn-primary">✨ Submit Profile</button>
             <div id="formMessage" class="form-message"></div>
           </form>
         </div>
@@ -132,7 +155,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p>📊 Made Group 7 FWP • Student Connect Platform</p>
+        <p>📊 Made by Group 7 FWP • Student Connect Platform</p>
       </div>
     </footer>
   </div>
@@ -157,11 +180,50 @@
           <h3>🏆 Achievements</h3>
           <p id="modalAchievements">No achievements listed</p>
         </div>
-        <!-- Social Media Section -->
         <div class="modal-section" id="modalSocialSection" style="display: none;">
           <h3><i class="fas fa-share-alt"></i> Connect with Me</h3>
           <div class="social-links" id="modalSocialLinks"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms and Conditions Modal -->
+  <div id="termsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-contract"></i> Terms and Conditions</h3>
+        <span class="close-modal" id="closeTermsModal">&times;</span>
+      </div>
+      <div class="modal-body terms-body">
+        <div class="terms-scroll">
+          <p><strong>1. Acceptance of Terms</strong><br>
+          By accessing and using this website, users agree to comply with these Terms and Conditions. If you do not agree, please do not use this platform.</p>
+
+          <p><strong>2. User Content</strong><br>
+          Students are solely responsible for the accuracy, completeness, and appropriateness of the content they submit. Offensive, discriminatory, or illegal content is strictly prohibited and will be removed immediately by the administrators.</p>
+
+          <p><strong>3. Privacy Policy</strong><br>
+          Personal data provided by students will be handled responsibly and will only be used for the purpose of displaying student profiles within this platform. Avoid sharing sensitive information.</p>
+
+          <p><strong>4. Intellectual Property</strong><br>
+          Students retain ownership of their submitted content but grant the platform permission to display, store, and share their profiles within the Student Connect community.</p>
+
+          <p><strong>5. Prohibited Activities</strong><br>
+          No hacking, false info, harassment, or misuse of the platform.</p>
+
+          <p><strong>6. Limitation of Liability</strong><br>
+          The platform is not responsible for damages from usage. Users interact at their own risk.</p>
+
+          <p><strong>7. Account Termination</strong><br>
+          Administrators reserve the right to remove any student profile that violates these Terms.</p>
+
+          <p><strong>8. Changes to Terms</strong><br>
+          Terms may change anytime. Continued use means acceptance.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="acceptTermsBtn" class="btn-primary">✓ I Accept the Terms and Conditions</button>
       </div>
     </div>
   </div>

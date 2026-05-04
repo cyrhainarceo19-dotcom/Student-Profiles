@@ -1,5 +1,5 @@
 // ============================================
-// STUDENT VIEW - WITH SOCIAL MEDIA LINKS
+// STUDENT VIEW - WITH SOCIAL MEDIA AUTO-FORMAT
 // ============================================
 
 // 🔴 PALITAN ANG URL NA ITO - Gamitin ang iyong Sheet.best URL para sa StudentProfiles
@@ -27,9 +27,110 @@ const modalAchievements = document.getElementById('modalAchievements');
 const modalSocialSection = document.getElementById('modalSocialSection');
 const modalSocialLinks = document.getElementById('modalSocialLinks');
 
+// Terms and Conditions Elements
+const termsModal = document.getElementById('termsModal');
+const showTermsLink = document.getElementById('showTermsLink');
+const closeTermsModal = document.getElementById('closeTermsModal');
+const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+const acceptTermsCheckbox = document.getElementById('acceptTermsCheckbox');
+const termsError = document.getElementById('termsError');
+
 // Variables
 let allStudents = [];
 let currentFilter = 'all';
+let termsAccepted = false;
+
+// ============================================
+// HELPER FUNCTION: FORMAT SOCIAL MEDIA URL
+// ============================================
+function formatSocialMediaUrl(input, platform) {
+    if (!input || input.trim() === '') {
+        return '';
+    }
+    
+    let url = input.trim();
+    
+    // Remove @ sign if present at the beginning
+    if (url.startsWith('@')) {
+        url = url.substring(1);
+    }
+    
+    // Remove any trailing slashes
+    while (url.endsWith('/')) {
+        url = url.slice(0, -1);
+    }
+    
+    // Check if it's already a valid full URL
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+    
+    // Check if it's facebook.com or instagram.com format without https
+    if (url.includes('facebook.com') || url.includes('instagram.com')) {
+        return 'https://' + url;
+    }
+    
+    // Otherwise, construct the full URL
+    if (platform === 'facebook') {
+        return `https://facebook.com/${url}`;
+    } else if (platform === 'instagram') {
+        return `https://instagram.com/${url}`;
+    }
+    
+    return url;
+}
+
+// ============================================
+// REAL-TIME URL PREVIEW
+// ============================================
+function updateFacebookPreview() {
+    const facebookInput = document.getElementById('facebook');
+    const preview = document.getElementById('facebookPreview');
+    if (preview && facebookInput) {
+        const formatted = formatSocialMediaUrl(facebookInput.value, 'facebook');
+        if (formatted) {
+            preview.textContent = `✓ Magiging: ${formatted}`;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+}
+
+function updateInstagramPreview() {
+    const instagramInput = document.getElementById('instagram');
+    const preview = document.getElementById('instagramPreview');
+    if (preview && instagramInput) {
+        const formatted = formatSocialMediaUrl(instagramInput.value, 'instagram');
+        if (formatted) {
+            preview.textContent = `✓ Magiging: ${formatted}`;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+}
+
+// ============================================
+// TERMS AND CONDITIONS FUNCTIONS
+// ============================================
+function showTermsModal() {
+    termsModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeTermsModalFunc() {
+    termsModal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+function acceptTerms() {
+    acceptTermsCheckbox.checked = true;
+    termsAccepted = true;
+    termsError.textContent = '';
+    closeTermsModalFunc();
+    showSuccessMessage('✓ Terms accepted! You can now submit your profile.');
+}
 
 // ============================================
 // FETCH ALL PROFILES
@@ -116,12 +217,11 @@ function displayProfiles(students) {
     const profilesHTML = students.map((student, index) => {
         const bioText = student.Bio && student.Bio.trim() !== '' ? student.Bio.substring(0, 100) : '';
         
-        // Build social icons HTML
         let socialIconsHTML = '';
-        if (student.Facebook) {
+        if (student.Facebook && student.Facebook.trim() !== '') {
             socialIconsHTML += `<a href="${escapeHtml(student.Facebook)}" target="_blank" class="social-icon" title="Facebook"><i class="fab fa-facebook"></i></a>`;
         }
-        if (student.Instagram) {
+        if (student.Instagram && student.Instagram.trim() !== '') {
             socialIconsHTML += `<a href="${escapeHtml(student.Instagram)}" target="_blank" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>`;
         }
         
@@ -171,14 +271,13 @@ function openModal(student) {
     modalBio.textContent = student.Bio?.trim() || 'No bio provided';
     modalAchievements.textContent = student.Achievements?.trim() || 'No achievements listed';
     
-    // Handle social media links
     let hasSocial = false;
     let socialHTML = '';
     
     if (student.Facebook && student.Facebook.trim() !== '') {
         socialHTML += `
             <a href="${escapeHtml(student.Facebook)}" target="_blank" class="social-link">
-                <i class="fab fa-facebook"></i> Facebook
+                <i class="fab fa-facebook"></i> Facebook Profile
             </a>
         `;
         hasSocial = true;
@@ -187,7 +286,7 @@ function openModal(student) {
     if (student.Instagram && student.Instagram.trim() !== '') {
         socialHTML += `
             <a href="${escapeHtml(student.Instagram)}" target="_blank" class="social-link">
-                <i class="fab fa-instagram"></i> Instagram
+                <i class="fab fa-instagram"></i> Instagram Profile
             </a>
         `;
         hasSocial = true;
@@ -221,11 +320,31 @@ function closeModalFunction() {
 }
 
 // ============================================
-// SUBMIT STUDENT DATA (WITH SOCIAL MEDIA)
+// SUBMIT STUDENT DATA (WITH URL FORMATTING)
 // ============================================
 async function submitStudentData(formData) {
+    // Check if terms are accepted
+    if (!acceptTermsCheckbox.checked && !termsAccepted) {
+        termsError.textContent = 'Please read and accept the Terms and Conditions first';
+        showTermsModal();
+        return;
+    }
+    
+    termsError.textContent = '';
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
+    
+    // FORMAT SOCIAL MEDIA URLS
+    let facebookUrl = '';
+    let instagramUrl = '';
+    
+    if (formData.facebook && formData.facebook.trim() !== '') {
+        facebookUrl = formatSocialMediaUrl(formData.facebook, 'facebook');
+    }
+    
+    if (formData.instagram && formData.instagram.trim() !== '') {
+        instagramUrl = formatSocialMediaUrl(formData.instagram, 'instagram');
+    }
     
     try {
         const response = await fetch(STUDENTS_API_URL, {
@@ -237,18 +356,31 @@ async function submitStudentData(formData) {
                 Year: formData.year,
                 Bio: formData.bio || '',
                 Achievements: formData.achievements || '',
-                Facebook: formData.facebook || '',
-                Instagram: formData.instagram || ''
+                Facebook: facebookUrl,
+                Instagram: instagramUrl,
+                TermsAccepted: 'Yes',
+                DateAccepted: new Date().toISOString(),
+                DateSubmitted: new Date().toISOString()
             })
         });
         
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
-        showSuccessMessage('✅ Profile submitted successfully!');
+        showSuccessMessage('✅ Profile submitted successfully! Thank you for accepting our Terms.');
         studentForm.reset();
+        acceptTermsCheckbox.checked = false;
+        termsAccepted = false;
+        
+        // Clear previews
+        const fbPreview = document.getElementById('facebookPreview');
+        const igPreview = document.getElementById('instagramPreview');
+        if (fbPreview) fbPreview.style.display = 'none';
+        if (igPreview) igPreview.style.display = 'none';
+        
         setTimeout(() => fetchAllProfiles(), 1000);
         
     } catch (error) {
+        console.error('Submit error:', error);
         showErrorMessage('❌ Failed to submit. Please try again.');
     } finally {
         submitBtn.disabled = false;
@@ -269,11 +401,16 @@ function validateForm(name, course, year) {
     if (!name?.trim()) {
         document.getElementById('nameError').textContent = 'Full name is required';
         isValid = false;
+    } else if (name.trim().length < 2) {
+        document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+        isValid = false;
     }
+    
     if (!course) {
         document.getElementById('courseError').textContent = 'Please select a course';
         isValid = false;
     }
+    
     if (!year) {
         document.getElementById('yearError').textContent = 'Please select a year level';
         isValid = false;
@@ -335,9 +472,34 @@ studentForm.addEventListener('submit', async (e) => {
 refreshBtn.addEventListener('click', () => { fetchAllProfiles(); showSuccessMessage('Refreshing profiles...'); });
 adminPanelBtn.addEventListener('click', () => { window.location.href = 'admin.html'; });
 
+// Social Media Preview Listeners
+const facebookInput = document.getElementById('facebook');
+const instagramInput = document.getElementById('instagram');
+if (facebookInput) facebookInput.addEventListener('input', updateFacebookPreview);
+if (instagramInput) instagramInput.addEventListener('input', updateInstagramPreview);
+
+// Terms Modal Event Listeners
+showTermsLink?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showTermsModal();
+});
+closeTermsModal?.addEventListener('click', closeTermsModalFunc);
+acceptTermsBtn?.addEventListener('click', acceptTerms);
+
+// Close modals
 closeModal.forEach(btn => btn.addEventListener('click', closeModalFunction));
-window.addEventListener('click', (e) => { if (e.target === modal) closeModalFunction(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('show')) closeModalFunction(); });
+window.addEventListener('click', (e) => { 
+    if (e.target === modal) closeModalFunction();
+    if (e.target === termsModal) closeTermsModalFunc();
+});
+document.addEventListener('keydown', (e) => { 
+    if (e.key === 'Escape') {
+        if (modal.classList.contains('show')) closeModalFunction();
+        if (termsModal.classList.contains('show')) closeTermsModalFunc();
+    }
+});
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => { fetchAllProfiles(); });
+document.addEventListener('DOMContentLoaded', () => { 
+    fetchAllProfiles();
+});
